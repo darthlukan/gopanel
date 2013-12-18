@@ -4,38 +4,41 @@ package main
 import (
 	"fmt"
 	"github.com/conformal/gotk3/gtk"
-	"time"
+	//"time"
 )
 
 func main() {
 	fmt.Println("Hello World!")
 	gtk.Init(nil)
-	panel, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+
+	builder, err := gtk.BuilderNew()
+
 	if err != nil {
 		panic(err)
 	}
 
-	panel.Connect("destroy", func() {
-		gtk.MainQuit()
-	})
+	builder.AddFromFile("panel.glade")
+	panel, err := builder.GetObject("Panel")
 
-	panel.SetDecorated(false)
-	panel.SetKeepAbove(true)
-	panel.SetDefaultGeometry(1920, 24)
-	panel.SetHasResizeGrip(false)
-	panel.Move(0, 1080)
-	panel.Add(giveClock())
+	if err != nil {
+		panic(err)
+	}
 
-	panel.ShowAll()
+	if w, ok := panel.(*gtk.Window); ok {
+		w.Connect("destroy", func() { gtk.MainQuit() })
+		button, err := builder.GetObject("SysActions")
+
+		if err != nil {
+			panic(err)
+		}
+
+		if b, good := button.(*gtk.Button); good {
+			b.Connect("clicked", func() { gtk.MainQuit() })
+		}
+
+		w.ShowAll()
+	} else {
+		panic(ok)
+	}
 	gtk.Main()
-}
-
-func giveClock() *gtk.Widget {
-	// TODO: This should really update every second...
-	now := time.Now().String()
-	clock, err := gtk.LabelNew(now)
-	if err != nil {
-		panic(err)
-	}
-	return &clock.Widget
 }
