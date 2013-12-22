@@ -70,11 +70,11 @@ func NewPanel(X *xgbutil.XUtil) {
 	screen := X.Screen()
 	width := int(screen.WidthInPixels)
 
-	if width > 1920 { // Must be multi-head, don't span.
+	if width > 1920 { // width > 1920 must be multi-head, don't span.
 		width = 1920
 	}
 	panel.SetWidth(width)
-	panel.SetDisplay(0) // Default to the primary display
+	panel.SetDisplay(0) // Default to the primary display, set but never actually used (yet)
 	panel.extType = []string{"_NET_WM_WINDOW_TYPE_DOCK"}
 
 	fmt.Sprintf("panel == %v\n", panel)
@@ -83,9 +83,8 @@ func NewPanel(X *xgbutil.XUtil) {
 		xproto.CwBackPixel|xproto.CwEventMask, uint32(panel.GetBgColor()),
 		xproto.EventMaskButtonRelease)
 
-	// TODO: Val will be either an error or nothing, check for that.
-	val := ewmh.WmWindowTypeSet(X, window.Id, panel.extType)
-	fmt.Sprintf("val == %v\n", val)
+	ewmh.WmWindowTypeSet(X, window.Id, panel.extType)
+	ewmh.WmStateSet(X, window.Id, []string{"_NET_WM_STATE_SKIP_PAGER"})
 
 	window.Map()
 }
