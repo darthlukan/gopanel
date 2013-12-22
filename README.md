@@ -22,3 +22,7 @@ their heads at.
 ## License
 
 > GPLv2, See LICENSE file.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/darthlukan/gopanel/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
